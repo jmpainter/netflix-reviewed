@@ -6,12 +6,32 @@
   <meta name="description" content="See Netflix new releases with reviews">
   <link rel="stylesheet" href="css/float-grid.css">
   <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Fascinate" rel="stylesheet">
   <title>Netflix Reviewed</title>
 </head>
 <body>
   <header role="banner">
-    <h1>Netflix Reviewed</h1>
+    <div class="row">
+      <div class=".col-12">
+        <h1>Netflix Reviewed</h1>
+      </div>
+    </div>
   </header>
+  <div id="content">
+    <section>
+      <form action="">
+        <label for="sort-by">Sort By:</label>
+        <div class="select">
+          <select name="sort-by" id="sort-by">
+            <option value="title">Title</option>
+            <option value="rating">Rating</option>
+            <option value="runtime">Run Time</option>
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </form>
+    </section>
+  </div>
   <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
