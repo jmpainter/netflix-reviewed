@@ -29,14 +29,17 @@ header {
 }
 header h1 {
   font-size: 36px;
-  font-family: 'Fascinate', cursive;
+	font-family: 'Fascinate', cursive;
+	text-align: center;
 }
 main {
   max-width: 1000px;
   margin: auto;
 }
 /* Sort by Form */
-
+.search-form {
+	text-align: center;
+}
 label {
 	font-size: 16px;
 }
@@ -91,4 +94,23 @@ label {
 }
 .select select:disabled ~ .select__arrow {
 	border-top-color: #ccc;
+}
+
+/* Movie Listings */
+
+.movie-frame {
+	border: 1px solid grey;
+	padding: 5px;
+}
+.thumbnail {
+	width: 128px;
+}
+.title {
+
+}
+.runtime {
+
+}
+.rating {
+
 }
