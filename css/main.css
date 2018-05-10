@@ -1,0 +1,25 @@
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, 
+fieldset, form, label, legend,
+footer, header, menu, nav, section, summary
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+html {
+  box-sizing: border-box;
+}
+* {
+  box-sizing: inherit;
+}
+
+body {
+	line-height: 1;
+}
