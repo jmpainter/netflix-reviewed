@@ -6,7 +6,7 @@
   <meta name="description" content="See Netflix new releases with reviews">
   <link rel="stylesheet" href="css/float-grid.css">
   <link rel="stylesheet" href="css/main.css">
-  <link href="https://fonts.googleapis.com/css?family=Fascinate" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Fascinate|Arimo" rel="stylesheet">
   <title>Netflix Reviewed</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
       </div>
     </div>
   </header>
-  <div id="content">
+  <main role="main" aria-live="assertive">
     <section>
       <form action="">
         <label for="sort-by">Sort By:</label>
@@ -31,7 +31,10 @@
         </div>
       </form>
     </section>
-  </div>
+    <section>
+      <div class="row"></div>
+    </section>
+  </main>
   <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="

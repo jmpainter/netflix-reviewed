@@ -21,6 +21,7 @@ html {
 }
 
 body {
+	font-family: 'Arimo', sans-serif; 
 	line-height: 1;
 }
 header {
@@ -30,9 +31,14 @@ header h1 {
   font-size: 36px;
   font-family: 'Fascinate', cursive;
 }
-#content {
+main {
   max-width: 1000px;
   margin: auto;
+}
+/* Sort by Form */
+
+label {
+	font-size: 16px;
 }
 
 /* Select */
@@ -42,37 +48,32 @@ header h1 {
 	width: 200px;
 	margin-bottom: 15px;
 }
-
 .select select {
 	display: inline-block;
 	width: 100%;
 	padding: 10px 15px;
 	cursor: pointer;
-	color: #7b7b7b;
+	color: white;
+	font-size: 16px;
 	border: 0;
 	border-radius: 0;
 	outline: 0;
-	background: #e6e6e6;
-	appearance: none;
+	background: #ef0715;
+	appearance: none; 
 	-webkit-appearance: none;
 	-moz-appearance: none;
 }
-
 .select select::-ms-expand {
 	display: none;
 }
-
 .select select:hover,
 .select select:focus {
-	color: #000;
-	background: #ccc;
+	background: #f53b47;
 }
-
 .select select:disabled {
 	pointer-events: none;
 	opacity: .5;
 }
-
 .select__arrow {
 	position: absolute;
 	top: 16px;
@@ -88,7 +89,6 @@ header h1 {
 .select select:focus ~ .select__arrow {
 	border-top-color: #000;
 }
-
 .select select:disabled ~ .select__arrow {
 	border-top-color: #ccc;
 }
