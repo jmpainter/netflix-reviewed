@@ -3,7 +3,7 @@ const OMDB_API_URL = 'https://www.omdbapi.com' ;
 
 const appState = {
   movies: null,
-  movieCounter: 0
+  currentMovie: 0
 };
 
 function logError(jqXHR, exception) {
@@ -28,7 +28,7 @@ function logError(jqXHR, exception) {
 
 function getMovieListFromAPI() {
 
-  let daysBack = '12';
+  let daysBack = '14';
   let countryId = 'US';
   let page = '1'
   const queryString = `q=get:new${daysBack}:${countryId}&p=${page}&t=ns&st=adv`
@@ -38,7 +38,11 @@ function getMovieListFromAPI() {
     dataType: 'json',
     contentType: 'application/json; charset=utf-8',
     beforeSend: setHeader
-  }).done(data => addReviewsToData(data))
+  }).done(data => {
+    appState.movies = data.ITEMS;
+    console.log(appState.movies);
+    getReviewsForMovieFromAPI();
+  })
     .fail((jqXHR, exception) => logError(jqXHR, exception));
 
   function setHeader(xhr) {
@@ -47,23 +51,31 @@ function getMovieListFromAPI() {
   }
 }
 
-function getReviewsFromAPI(imdbid) {
+function getReviewsForMovieFromAPI() {
+  console.log('getReviewsForMovieFromAPI called: ' + appState.currentMovie);
   const data = {
-    i: imdbid,
+    i: appState.movies[appState.currentMovie].imdbid,
     apikey: 'dc59eece'
   };
   $.ajax({
     url: OMDB_API_URL,
     data: data,
     type: 'GET',
-    dataType: 'json',
+    dataType: 'json'
   }).done(detail => {
-    setReviewsForMovie(imdbid, detail.Ratings);
+    console.log(detail);
+    setReviewsForMovie(detail.Ratings);
+    appState.currentMovie++;      
+    if(appState.currentMovie < appState.movies.length) {
+      console.log('appState.currentMovie,  appState.movies.length: ' + appState.currentMovie + ', ' + appState.movies.length);
+      getReviewsForMovieFromAPI();
+    } else {
+      displayResults();
+    }
   }).fail((jqXHR, exception) => logError(jqXHR, exception));
 }
 
-function setReviewsForMovie(imdbid, reviews) {
-  let movieIndex = appState.movies.findIndex(movie => movie.imdbid === imdbid);
+function setReviewsForMovie(reviews) {
   let reviewImdb = null;
   let reviewRt = null;
   let reviewMetacritic = null;
@@ -78,13 +90,9 @@ function setReviewsForMovie(imdbid, reviews) {
       }
     });
   }
-  appState.movies[movieIndex]['reviewImdb'] = reviewImdb;
-  appState.movies[movieIndex]['reviewRt'] = reviewRt;
-  appState.movies[movieIndex]['reviewMetacritic'] = reviewMetacritic;
-  appState.movieCounter++;
-  if(appState.movieCounter === appState.movies.length) {
-    displayResults();
-  }
+  appState.movies[appState.currentMovie]['reviewImdb'] = reviewImdb;
+  appState.movies[appState.currentMovie]['reviewRt'] = reviewRt;
+  appState.movies[appState.currentMovie]['reviewMetacritic'] = reviewMetacritic;
 }
 
 function renderMovie(movie) {
@@ -103,7 +111,6 @@ function renderMovie(movie) {
 }
 
 function displayResults() {
-  console.log(appState.movies);
   let results = '';
   if(appState.movies.length > 0) {
     results = results + '<div class="row">\n';
@@ -121,13 +128,6 @@ function displayResults() {
 // {Source: "Internet Movie Database", Value: "6.5/10"}
 // {Source: "Rotten Tomatoes", Value: "33%"}
 // {Source: "Metacritic", Value: "37/100"}
-
-function addReviewsToData(data) {
-  appState.movies = data.ITEMS;
-  appState.movies.forEach(movie => {
-    getReviewsFromAPI(movie.imdbid);
-  });
-}
 
 function startApp() {
   getMovieListFromAPI();
