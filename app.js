@@ -6,7 +6,7 @@ const appState = {
   movieCounter: 0
 };
 
-function getMovieList() {
+function getMovieListFromAPI() {
 
   let daysBack = '7';
   let countryId = 'US';
@@ -46,7 +46,7 @@ function getMovieList() {
   }
 }
 
-function getReviews(imdbid) {
+function getReviewsFromAPI(imdbid) {
   const data = {
     i: imdbid,
     apikey: 'dc59eece'
@@ -77,45 +77,57 @@ function setReviewsForMovie(imdbid, reviews) {
       }
     });
   }
-  appState.movies[movieIndex]['review-imdb'] = reviewImdb;
-  appState.movies[movieIndex]['review-rt'] = reviewRt;
-  appState.movies[movieIndex]['review-metacritic'] = reviewMetacritic;
+  appState.movies[movieIndex]['reviewImdb'] = reviewImdb;
+  appState.movies[movieIndex]['reviewRt'] = reviewRt;
+  appState.movies[movieIndex]['reviewMetacritic'] = reviewMetacritic;
   appState.movieCounter++;
   if(appState.movieCounter === appState.movies.length) {
-    console.log('FINISHED!');
-    console.log(appState.movies);
+    displayResults();
   }
 }
 
-// :
+function renderMovie(movie) {
+  return `
+  <div class="col-2">
+    <div class="movie-frame">
+      <img class="thumbnail" src="${movie.image}" alt="${movie.title}">
+      <p class="title">${movie.title}</p>
+      <p class="runtime">Runtime: ${movie.runtime}</p>
+      <p class="rating">ImDB: ${movie.reviewImdb}</p>
+      <p class="rating">Metacritic: ${movie.reviewMetacritic}</p>
+      <p class="rating">Rotten Tomatoes: ${movie.reviewRt}</p>
+    </div>
+  </div> 
+  `;
+}
+
+function displayResults() {
+  let results = '';
+  if(appState.movies.length > 0) {
+    results = results + '<div class="row">\n';
+    for(let i = 0; i < appState.movies.length; i++){
+      results = results += renderMovie(appState.movies[i]);
+      if((i + 1) % 6 === 0) {
+        results = results + '</div><div class="row">';
+      }
+    }
+    results = results + '</div>\n';
+  }
+  $('#results').html(results);
+}
+
 // {Source: "Internet Movie Database", Value: "6.5/10"}
-// 1
-// :
 // {Source: "Rotten Tomatoes", Value: "33%"}
-// 2
-// :
 // {Source: "Metacritic", Value: "37/100"}
 
 function addReviewsToData(data) {
-  // console.log(data);
   appState.movies = data.ITEMS;
-  // console.log(appState.movies);
-  // let reviews = null;
-  // let length = data.ITEMS.length;
-  // // console.log(appState.movies.length);
-  // for(let i = 0; i < length; i++) {
-  //   reviews = getReviews(data.ITEMS[i].imdbid);
-  //   // console.log(reviews);
-  // };
-  let reviews = null;
-  // console.log(appState.movies);
   appState.movies.forEach(movie => {
-    reviews = getReviews(movie.imdbid);
+    getReviewsFromAPI(movie.imdbid);
   });
-  
 }
 
 function startApp() {
-  getMovieList();
+  getMovieListFromAPI();
 }
 $(startApp);
