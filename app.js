@@ -52,7 +52,6 @@ function getMovieListFromAPI() {
 }
 
 function getReviewsForMovieFromAPI() {
-  console.log('getReviewsForMovieFromAPI called: ' + appState.currentMovie);
   const data = {
     i: appState.movies[appState.currentMovie].imdbid,
     apikey: 'dc59eece'
@@ -63,11 +62,9 @@ function getReviewsForMovieFromAPI() {
     type: 'GET',
     dataType: 'json'
   }).done(detail => {
-    console.log(detail);
     setReviewsForMovie(detail.Ratings);
     appState.currentMovie++;      
     if(appState.currentMovie < appState.movies.length) {
-      console.log('appState.currentMovie,  appState.movies.length: ' + appState.currentMovie + ', ' + appState.movies.length);
       getReviewsForMovieFromAPI();
     } else {
       displayResults();
@@ -136,7 +133,43 @@ function displayResults() {
 // {Source: "Rotten Tomatoes", Value: "33%"}
 // {Source: "Metacritic", Value: "37/100"}
 
+function getRuntimeInMinutes(str) {
+  let hours, minutes;
+  if(str === '') {
+    return Infinity;
+  } else {
+    if(str.indexOf('h') !== -1) {
+      hours = Number(str.slice(0, str.indexOf('h')));
+      if(str.indexOf('m') !== -1) {
+        minutes = Number(str.slice((str.indexOf('h') + 1), str.indexOf('m')));
+      }
+    }
+    return hours * 60 + minutes;
+  }
+}
+
+function sortMovies(type) {
+  if(type === 'title') {
+    appState.movies = appState.movies.sort((a, b) => {
+      if(a.title < b.title) return -1;
+      if(a.title > b.title) return 1;
+      return 0;
+    });
+  } else if (type === 'runtime') {
+    appState.movies = appState.movies.sort((a, b) => getRuntimeInMinutes(a.runtime) - getRuntimeInMinutes(b.runtime));
+  }
+  displayResults();
+}
+
+function handleSortSubmit() {
+  $('.js-form').submit(event => {
+    event.preventDefault();
+    sortMovies($('#sort-by').val());
+  });
+}
+
 function startApp() {
-  //getMovieListFromAPI();
+  getMovieListFromAPI();
+  handleSortSubmit();
 }
 $(startApp);
