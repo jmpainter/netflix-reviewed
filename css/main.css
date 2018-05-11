@@ -106,7 +106,8 @@ label {
 	width: 128px;
 }
 .title {
-
+	font-weight: 600;
+	padding-bottom: 6px;
 }
 .runtime {
 

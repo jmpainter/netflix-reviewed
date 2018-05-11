@@ -93,15 +93,16 @@ function renderMovie(movie) {
       <img class="thumbnail" src="${movie.image}" alt="${movie.title}">
       <p class="title">${movie.title}</p>
       <p class="runtime">Runtime: ${movie.runtime}</p>
-      <p class="rating">ImDB: ${movie.reviewImdb}</p>
-      <p class="rating">Metacritic: ${movie.reviewMetacritic}</p>
-      <p class="rating">Rotten Tomatoes: ${movie.reviewRt}</p>
+      <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
+      <p class="rating">${movie.reviewMetacritic ? 'Metacritic: ' +  movie.reviewMetacritic : ''}</p>
+      <p class="rating">${movie.reviewRt ? 'Rotten Tomatoes: ' + movie.reviewRt : ''}</p>
     </div>
   </div> 
   `;
 }
 
 function displayResults() {
+  console.log(appState.movies);
   let results = '';
   if(appState.movies.length > 0) {
     results = results + '<div class="row">\n';
