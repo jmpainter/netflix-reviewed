@@ -95,11 +95,18 @@ function setReviewsForMovie(reviews) {
   appState.movies[appState.currentMovie]['reviewMetacritic'] = reviewMetacritic;
 }
 
+function changeToHttps(url) {
+  if(url.indexOf('http://') !== -1) {
+    url = 'https' + url.slice(4);
+  }
+  return url;
+}
+
 function renderMovie(movie) {
   return `
   <div class="col-2">
     <div class="movie-frame">
-      <img class="thumbnail" src="${movie.image}" alt="${movie.title}">
+      <img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
       <p class="title">${movie.title}</p>
       <p class="runtime">Runtime: ${movie.runtime}</p>
       <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
