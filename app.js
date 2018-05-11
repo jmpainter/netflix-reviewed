@@ -1,5 +1,5 @@
 const UNOGS_API_URL = 'https://unogs-unogs-v1.p.mashape.com/aaapi.cgi';
-const OMDB_API_URL = 'http://www.omdbapi.com' ;
+const OMDB_API_URL = 'https://www.omdbapi.com' ;
 
 const appState = {
   movies: null,
