@@ -6,6 +6,26 @@ const appState = {
   movieCounter: 0
 };
 
+function logError(jqXHR, exception) {
+    var msg = '';
+  if (jqXHR.status === 0) {
+      msg = 'Not connect.\n Verify Network.';
+  } else if (jqXHR.status == 404) {
+      msg = 'Requested page not found. [404]';
+  } else if (jqXHR.status == 500) {
+      msg = 'Internal Server Error [500].';
+  } else if (exception === 'parsererror') {
+      msg = 'Requested JSON parse failed.';
+  } else if (exception === 'timeout') {
+      msg = 'Time out error.';
+  } else if (exception === 'abort') {
+      msg = 'Ajax request aborted.';
+  } else {
+      msg = 'Uncaught Error.\n' + jqXHR.responseText;
+  }
+  console.log(msg);
+}
+
 function getMovieListFromAPI() {
 
   let daysBack = '7';
@@ -19,26 +39,7 @@ function getMovieListFromAPI() {
     contentType: 'application/json; charset=utf-8',
     beforeSend: setHeader
   }).done(data => addReviewsToData(data))
-    .fail(function (jqXHR, exception) {
-      // Our error logic here
-      var msg = '';
-      if (jqXHR.status === 0) {
-          msg = 'Not connect.\n Verify Network.';
-      } else if (jqXHR.status == 404) {
-          msg = 'Requested page not found. [404]';
-      } else if (jqXHR.status == 500) {
-          msg = 'Internal Server Error [500].';
-      } else if (exception === 'parsererror') {
-          msg = 'Requested JSON parse failed.';
-      } else if (exception === 'timeout') {
-          msg = 'Time out error.';
-      } else if (exception === 'abort') {
-          msg = 'Ajax request aborted.';
-      } else {
-          msg = 'Uncaught Error.\n' + jqXHR.responseText;
-      }
-      console.log(msg);
-  })
+    .fail((jqXHR, exception) => logError(jqXHR, exception));
 
   function setHeader(xhr) {
     xhr.setRequestHeader('X-Mashape-Key', 'GdPqlW6JWXmshZnos2IMD8VChbjzp1JGSXCjsnWYu1rvcs6MsH');
@@ -58,7 +59,7 @@ function getReviewsFromAPI(imdbid) {
     dataType: 'json',
   }).done(detail => {
     setReviewsForMovie(imdbid, detail.Ratings);
-  }).fail((jqXHR, exception) => {reviews = null});
+  }).fail((jqXHR, exception) => logError(jqXHR, exception));
 }
 
 function setReviewsForMovie(imdbid, reviews) {
