@@ -137,6 +137,6 @@ function displayResults() {
 // {Source: "Metacritic", Value: "37/100"}
 
 function startApp() {
-  getMovieListFromAPI();
+  //getMovieListFromAPI();
 }
 $(startApp);
