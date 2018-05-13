@@ -129,10 +129,6 @@ function displayResults() {
   $('#results').html(results);
 }
 
-// {Source: "Internet Movie Database", Value: "6.5/10"}
-// {Source: "Rotten Tomatoes", Value: "33%"}
-// {Source: "Metacritic", Value: "37/100"}
-
 function getRuntimeInMinutes(str) {
   let hours, minutes;
   if(str === '') {
@@ -148,6 +144,18 @@ function getRuntimeInMinutes(str) {
   }
 }
 
+function getImDBRating(str) {
+  return str !== null ? Number(str.slice(0, str.indexOf('/'))) : 0;
+}
+
+function getRottenTomatoesRating(str) {
+  return str !== null ? Number(str.slice(0, str.indexOf('%'))) : 0;
+}
+
+function getMetacriticRating(str) {
+  return str !== null ? Number(str.slice(0, str.indexOf('/'))) : 0;
+}
+
 function sortMovies(type) {
   if(type === 'title') {
     appState.movies = appState.movies.sort((a, b) => {
@@ -157,7 +165,15 @@ function sortMovies(type) {
     });
   } else if (type === 'runtime') {
     appState.movies = appState.movies.sort((a, b) => getRuntimeInMinutes(a.runtime) - getRuntimeInMinutes(b.runtime));
+  } else if (type ==='imdb') {
+    appState.movies = appState.movies.sort((a, b) => getImDBRating(b.reviewImdb) - getImDBRating(a.reviewImdb));
   }
+  else if (type ==='rottentomatoes') {
+    appState.movies = appState.movies.sort((a, b) => getRottenTomatoesRating(b.reviewRt) - getRottenTomatoesRating(a.reviewRt));
+  }
+  else if (type ==='metacritic') {
+    appState.movies = appState.movies.sort((a, b) => getMetacriticRating(b.reviewMetacritic) - getMetacriticRating(a.reviewMetacritic));
+  }  
   displayResults();
 }
 
