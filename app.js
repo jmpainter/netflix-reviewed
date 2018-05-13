@@ -28,7 +28,7 @@ function logError(jqXHR, exception) {
 
 function getMovieListFromAPI() {
 
-  let daysBack = '14';
+  let daysBack = '5';
   let countryId = 'US';
   let page = '1'
   const queryString = `q=get:new${daysBack}:${countryId}&p=${page}&t=ns&st=adv`
@@ -62,11 +62,16 @@ function getReviewsForMovieFromAPI() {
     type: 'GET',
     dataType: 'json'
   }).done(detail => {
+    console.log(detail);
     setReviewsForMovie(detail.Ratings);
+    let poster;
+    detail.Poster && detail.Poster !== "N/A" ? poster = detail.Poster : poster = "";
+    appState.movies[appState.currentMovie]['IMDBPoster'] = poster;
     appState.currentMovie++;      
     if(appState.currentMovie < appState.movies.length) {
       getReviewsForMovieFromAPI();
     } else {
+      console.log(appState.movies);
       displayResults();
     }
   }).fail((jqXHR, exception) => logError(jqXHR, exception));
@@ -103,8 +108,8 @@ function renderMovie(movie) {
   return `
   <div class="col-2">
     <div class="movie-frame">
-      <img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
-      <p class="title">${movie.title}</p>
+      <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
+      <p class="title">${movie.title}</p></a>
       <p class="runtime">Runtime: ${movie.runtime}</p>
       <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
       <p class="rating">${movie.reviewMetacritic ? 'Metacritic: ' +  movie.reviewMetacritic : ''}</p>
@@ -184,8 +189,62 @@ function handleSortSubmit() {
   });
 }
 
+function renderDetail(movie) {
+  let poster;
+  if(movie.largeimage !== "") {
+    poster = movie.largeimage;
+  } else if (movie.IMDBPoster !== "") {
+    poster = movie.IMDBPoster;
+  } else {
+    poster = movie.image;
+  }  
+  return `
+    <div class="row">
+    <div class="col-12">
+      <div id="detail-frame">
+        <img src="${poster}" alt="">
+        <p class="detail-title">${movie.title}</p>
+        <p class="detail-released">${movie.released}</p>
+        <p class="detail-synopsis">${movie.synopsis}</p>
+        <button class='js-back-button'>Back</button>
+      </div>
+    </div>
+  </div>  
+  `;
+}
+
+function returnToResults () {
+  $('#results').hide();
+  displayResults();
+  $('#results').fadeIn('slow');
+}
+
+function handleBackButtonClick() {
+  $('.js-back-button').click(returnToResults);
+}
+
+function getMovieFromIMDBID(imdbid) {
+  return appState.movies.find(movie => movie.imdbid === imdbid);
+}
+
+function handleMovieClick() {
+  $('#results').on('click', '.js-movie', function(event) {
+    const imdbid = $(this).attr('data-imdbid');
+    const movie = getMovieFromIMDBID(imdbid);
+    $('#results').hide();
+    if(movie) {
+      $('#results').html(renderDetail(movie));
+    } else {
+      alert('movie could not be found');
+    }
+    handleBackButtonClick();
+    $('#results').fadeIn('slow');
+  });
+}
+
 function startApp() {
   getMovieListFromAPI();
   handleSortSubmit();
+  handleMovieClick();
 }
 $(startApp);
