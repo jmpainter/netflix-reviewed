@@ -3,7 +3,6 @@ const OMDB_API_URL = 'https://www.omdbapi.com' ;
 
 const appState = {
   movies: null,
-  currentMovie: 0
 };
 
 function logError(jqXHR, exception) {
@@ -41,7 +40,7 @@ function getMovieListFromAPI() {
   }).done(data => {
     appState.movies = data.ITEMS;
     console.log(appState.movies);
-    getReviewsForMovieFromAPI();
+    requestAllMovieReviews();
   })
     .fail((jqXHR, exception) => logError(jqXHR, exception));
 
@@ -51,50 +50,80 @@ function getMovieListFromAPI() {
   }
 }
 
-function getReviewsForMovieFromAPI() {
+function requestAllMovieReviews() {
+  const promises = [];
+  appState.movies.forEach(movie => promises.push(getReviewsForMovieFromAPI(movie.imdbid)));
+  console.log(promises);
+  Promise.all(promises).then(function(results) {
+    console.log('all promises complete');
+    console.log(results);
+    displayResults();
+  });
+}
+
+function getReviewsForMovieFromAPI(imdbid) {
   const data = {
-    i: appState.movies[appState.currentMovie].imdbid,
+    i: imdbid,
     apikey: 'dc59eece'
   };
-  $.ajax({
+  return $.ajax({
     url: OMDB_API_URL,
     data: data,
     type: 'GET',
     dataType: 'json'
-  }).done(detail => {
-    console.log(detail);
-    setReviewsForMovie(detail.Ratings);
-    let poster;
-    detail.Poster && detail.Poster !== "N/A" ? poster = detail.Poster : poster = "";
-    appState.movies[appState.currentMovie]['IMDBPoster'] = poster;
-    appState.currentMovie++;      
-    if(appState.currentMovie < appState.movies.length) {
-      getReviewsForMovieFromAPI();
-    } else {
-      console.log(appState.movies);
-      displayResults();
-    }
+  }).done(details => {
+    setDetailsForMovie(details);
   }).fail((jqXHR, exception) => logError(jqXHR, exception));
 }
 
-function setReviewsForMovie(reviews) {
-  let reviewImdb = null;
-  let reviewRt = null;
-  let reviewMetacritic = null;
-  if(reviews) {
-    reviews.forEach(review => {
-      if(review.Source === 'Internet Movie Database') {
-        reviewImdb = review.Value;
-      } else if (review.Source === 'Rotten Tomatoes') {
-        reviewRt = review.Value;
-      } else if (review.Source === 'Metacritic') {
-        reviewMetacritic = review.Value;
-      }
-    });
+function runtimeFormat(runtime) {
+  if(runtime === 'N/A') {
+    return '';
   }
-  appState.movies[appState.currentMovie]['reviewImdb'] = reviewImdb;
-  appState.movies[appState.currentMovie]['reviewRt'] = reviewRt;
-  appState.movies[appState.currentMovie]['reviewMetacritic'] = reviewMetacritic;
+  const min = Number(runtime.slice(0, runtime.indexOf(' ')));
+  let hours = Math.floor(min / 60);
+  let minutes = min % 60;
+  return hours.toString() + 'h' + minutes.toString() + 'm';
+}
+
+function setDetailsForMovie(details) {
+  console.log(details);
+  if(details.imdbID) {
+    const movieIndex = appState.movies.findIndex(movie => movie.imdbid === details.imdbID);
+    if(movieIndex !== -1) {
+      console.log(`movie index ${movieIndex} matched to imdbID ${details.imdbID}`);
+      let reviewImdb = null;
+      let reviewRt = null;
+      let reviewMetacritic = null;
+      const reviews = details.Ratings;
+      if(reviews) {
+        reviews.forEach(review => {
+          if(review.Source === 'Internet Movie Database') {
+            reviewImdb = review.Value;
+          } else if (review.Source === 'Rotten Tomatoes') {
+            reviewRt = review.Value;
+          } else if (review.Source === 'Metacritic') {
+            reviewMetacritic = review.Value;
+          }
+        });
+      }
+      appState.movies[movieIndex]['reviewImdb'] = reviewImdb;
+      appState.movies[movieIndex]['reviewRt'] = reviewRt;
+      appState.movies[movieIndex]['reviewMetacritic'] = reviewMetacritic;
+    
+      let poster;
+      details.Poster && details.Poster !== "N/A" ? poster = details.Poster : poster = "";
+      appState.movies[movieIndex]['IMDBPoster'] = poster;
+
+      if(appState.movies[movieIndex]['runtime'] === '') {
+        appState.movies[movieIndex]['runtime'] = runtimeFormat(details.Runtime);
+      }
+    } else {
+      console.log(`No match in state. details: ${details}`);
+    }
+  } else {
+    console.log(`No result returned. details: ${JSON.stringify(details)}`);
+  }
 }
 
 function changeToHttps(url) {
@@ -110,7 +139,7 @@ function renderMovie(movie) {
     <div class="movie-frame">
       <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
       <p class="title">${movie.title}</p></a>
-      <p class="runtime">Runtime: ${movie.runtime}</p>
+      <p class="runtime">${movie.runtime ? 'Runtime: ' +  movie.runtime : ''}</p>
       <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
       <p class="rating">${movie.reviewMetacritic ? 'Metacritic: ' +  movie.reviewMetacritic : ''}</p>
       <p class="rating">${movie.reviewRt ? 'Rotten Tomatoes: ' + movie.reviewRt : ''}</p>
@@ -120,6 +149,8 @@ function renderMovie(movie) {
 }
 
 function displayResults() {
+  console.log('displayResults called');
+  console.log(appState.movies);  
   let results = '';
   if(appState.movies.length > 0) {
     results = results + '<div class="row">\n';
@@ -149,16 +180,8 @@ function getRuntimeInMinutes(str) {
   }
 }
 
-function getImDBRating(str) {
-  return str !== null ? Number(str.slice(0, str.indexOf('/'))) : 0;
-}
-
-function getRottenTomatoesRating(str) {
-  return str !== null ? Number(str.slice(0, str.indexOf('%'))) : 0;
-}
-
-function getMetacriticRating(str) {
-  return str !== null ? Number(str.slice(0, str.indexOf('/'))) : 0;
+function getRating(str, separator) {
+  return str !== null ? Number(str.slice(0, str.indexOf(separator))) : 0;
 }
 
 function sortMovies(type) {
@@ -171,13 +194,13 @@ function sortMovies(type) {
   } else if (type === 'runtime') {
     appState.movies = appState.movies.sort((a, b) => getRuntimeInMinutes(a.runtime) - getRuntimeInMinutes(b.runtime));
   } else if (type ==='imdb') {
-    appState.movies = appState.movies.sort((a, b) => getImDBRating(b.reviewImdb) - getImDBRating(a.reviewImdb));
+    appState.movies = appState.movies.sort((a, b) => getRating(b.reviewImdb, '/') - getRating(a.reviewImdb, '/'));
   }
   else if (type ==='rottentomatoes') {
-    appState.movies = appState.movies.sort((a, b) => getRottenTomatoesRating(b.reviewRt) - getRottenTomatoesRating(a.reviewRt));
+    appState.movies = appState.movies.sort((a, b) => getRating(b.reviewRt, '%') - getRating(a.reviewRt, '%'));
   }
   else if (type ==='metacritic') {
-    appState.movies = appState.movies.sort((a, b) => getMetacriticRating(b.reviewMetacritic) - getMetacriticRating(a.reviewMetacritic));
+    appState.movies = appState.movies.sort((a, b) => getRating(b.reviewMetacritic, '/') - getRating(a.reviewMetacritic, '/'));
   }  
   displayResults();
 }
