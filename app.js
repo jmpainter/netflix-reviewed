@@ -1,9 +1,10 @@
 const UNOGS_API_URL = 'https://unogs-unogs-v1.p.mashape.com/aaapi.cgi';
 const OMDB_API_URL = 'https://www.omdbapi.com' ;
-const IS_LOCAL = true;
+const IS_LOCAL = false;
 
 const appState = {
   movies: null,
+  loadComplete: false
 };
 
 function logError(jqXHR, exception) {
@@ -57,6 +58,7 @@ function requestAllMovieReviews() {
   Promise.all(promises).then((results) => {
     console.log('all promises complete');
     console.log(results);
+    appState.loadComplete = true;
     displayResults();
   });
 }
@@ -167,6 +169,12 @@ function displayResults() {
   $('#results').html(results);
 }
 
+function displayResultsWithIncompleteData() {
+  if(appState.loadComplete === false) {
+    displayResults();
+  }
+}
+
 function getRuntimeInMinutes(str) {
   let hours, minutes;
   if(str === '') {
@@ -217,7 +225,7 @@ function renderDetail(movie) {
   let poster;
   if(movie.largeimage !== "") {
     poster = movie.largeimage;
-  } else if (movie.IMDBPoster !== "") {
+  } else if (movie.IMDBPoster) {
     poster = movie.IMDBPoster;
   } else {
     poster = movie.image;
@@ -271,6 +279,7 @@ function startApp() {
     appState.movies = movies.ITEMS;
     displayResults();
   } else {
+    setTimeout(displayResultsWithIncompleteData, 6000)
     getMovieListFromAPI();
   }
   handleSortSelectChange();
