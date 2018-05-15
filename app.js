@@ -182,7 +182,7 @@ function getRuntimeInMinutes(str) {
 }
 
 function getRating(str, separator) {
-  return str !== null ? Number(str.slice(0, str.indexOf(separator))) : 0;
+  return str ? Number(str.slice(0, str.indexOf(separator))) : 0;
 }
 
 function sortMovies(type) {
