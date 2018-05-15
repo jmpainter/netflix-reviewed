@@ -1,5 +1,6 @@
 const UNOGS_API_URL = 'https://unogs-unogs-v1.p.mashape.com/aaapi.cgi';
 const OMDB_API_URL = 'https://www.omdbapi.com' ;
+const IS_LOCAL = true;
 
 const appState = {
   movies: null,
@@ -27,7 +28,7 @@ function logError(jqXHR, exception) {
 
 function getMovieListFromAPI() {
 
-  let daysBack = '5';
+  let daysBack = '12';
   let countryId = 'US';
   let page = '1'
   const queryString = `q=get:new${daysBack}:${countryId}&p=${page}&t=ns&st=adv`
@@ -53,8 +54,7 @@ function getMovieListFromAPI() {
 function requestAllMovieReviews() {
   const promises = [];
   appState.movies.forEach(movie => promises.push(getReviewsForMovieFromAPI(movie.imdbid)));
-  console.log(promises);
-  Promise.all(promises).then(function(results) {
+  Promise.all(promises).then((results) => {
     console.log('all promises complete');
     console.log(results);
     displayResults();
@@ -87,7 +87,6 @@ function runtimeFormat(runtime) {
 }
 
 function setDetailsForMovie(details) {
-  console.log(details);
   if(details.imdbID) {
     const movieIndex = appState.movies.findIndex(movie => movie.imdbid === details.imdbID);
     if(movieIndex !== -1) {
@@ -127,8 +126,10 @@ function setDetailsForMovie(details) {
 }
 
 function changeToHttps(url) {
-  if(url.indexOf('http://') !== -1) {
-    url = 'https' + url.slice(4);
+  if(!IS_LOCAL) {
+    if(url.indexOf('http://') !== -1) {
+      url = 'https' + url.slice(4);
+    }
   }
   return url;
 }
@@ -137,7 +138,7 @@ function renderMovie(movie) {
   return `
   <div class="col-2">
     <div class="movie-frame">
-      <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
+      <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}" role="button"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
       <p class="title">${movie.title}</p></a>
       <p class="runtime">${movie.runtime ? 'Runtime: ' +  movie.runtime : ''}</p>
       <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
@@ -266,7 +267,12 @@ function handleMovieClick() {
 }
 
 function startApp() {
-  getMovieListFromAPI();
+  if(IS_LOCAL) {
+    appState.movies = movies.ITEMS;
+    displayResults();
+  } else {
+    getMovieListFromAPI();
+  }
   handleSortSubmit();
   handleMovieClick();
 }
