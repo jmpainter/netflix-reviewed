@@ -215,9 +215,12 @@ button:focus {
 
 @media only screen and (max-width: 375px) {
     #detail-frame img {
-      max-width: 240px;
+      max-width: 227px;
 		}
 		header h1 {
 			font-size: 36px;
+		}
+		header {
+			padding: 0px;
 		}
 }
