@@ -23,6 +23,7 @@ html {
 body {
 	font-family: 'Arimo', sans-serif; 
 	line-height: 1;
+	padding: 0 6px;
 }
 header {
   padding: 20px;
@@ -85,7 +86,7 @@ button:focus {
 .select {
 	position: relative;
 	display: inline-block;
-	width: 200px;
+	width: 125px;
 	margin-bottom: 15px;
 }
 .select select {
@@ -176,6 +177,8 @@ button:focus {
 .movie-frame {
 	padding: 5px;
 	border-radius: 3px;
+	margin: 9px auto;
+	max-width: 141px;
 }
 .thumbnail {
 	width: 128px;
@@ -206,4 +209,15 @@ button:focus {
 .detail-synopsis {
 	margin: 12px 0;
 	font-size: 17px;
+}
+
+/* Responsive Styles */
+
+@media only screen and (max-width: 375px) {
+    #detail-frame img {
+      max-width: 240px;
+		}
+		header h1 {
+			font-size: 36px;
+		}
 }
