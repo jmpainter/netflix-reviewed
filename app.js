@@ -1,6 +1,6 @@
 const UNOGS_API_URL = 'https://unogs-unogs-v1.p.mashape.com/aaapi.cgi';
 const OMDB_API_URL = 'https://www.omdbapi.com' ;
-const IS_LOCAL = false;
+const IS_LOCAL = true;
 
 const appState = {
   movies: null,
@@ -140,6 +140,7 @@ function renderMovie(movie) {
     <div class="movie-frame">
       <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}" role="button"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
       <p class="title">${movie.title}</p></a>
+      <p class="type">Type: ${movie.type}</p>
       <p class="runtime">${movie.runtime ? 'Runtime: ' +  movie.runtime : ''}</p>
       <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
       <p class="rating">${movie.reviewMetacritic ? 'Metacritic: ' +  movie.reviewMetacritic : ''}</p>
@@ -154,11 +155,11 @@ function displayResults() {
   console.log(appState.movies);  
   let results = '';
   if(appState.movies.length > 0) {
-    results = results + '<div class="row">\n';
+    results = results + '<div id="flex-container">\n';
     for(let i = 0; i < appState.movies.length; i++){
       results = results += renderMovie(appState.movies[i]);
       if((i + 1) % 6 === 0) {
-        results = results + '</div><div class="row">';
+        // results = results + '</div><div class="row">';
       }
     }
     results = results + '</div>\n';

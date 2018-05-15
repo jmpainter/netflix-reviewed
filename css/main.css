@@ -23,7 +23,7 @@ html {
 body {
 	font-family: 'Arimo', sans-serif; 
 	line-height: 1;
-	padding: 0 6px;
+	padding: 16px 6px;
 }
 header {
   padding: 20px;
@@ -210,6 +210,10 @@ button:focus {
 	margin: 12px 0;
 	font-size: 17px;
 }
+#detail-frame img {
+	display: block;
+	margin: auto;
+}
 
 /* Responsive Styles */
 
@@ -223,4 +227,44 @@ button:focus {
 		header {
 			padding: 0px;
 		}
+}
+
+/* Flex box */
+.col-12 {
+	width: 100%;
+}
+.col-2 {
+	width: 100%;
+}
+
+@media only screen and (min-width: 375px) {
+  /* 3 columns, 3/12 in % */  
+  .col-2 {
+    width: 50%;
+  }
+}
+
+@media only screen and (min-width: 510px) {
+  /* 3 columns, 3/12 in % */  
+  .col-2 {
+    width: 33.33%;
+  }
+}
+
+@media only screen and (min-width: 670px) {
+  /* 3 columns, 3/12 in % */  
+  .col-2 {
+    width: 25%;
+  }
+}
+@media only screen and (min-width: 990px) {
+	.col-2 {
+		width: 16.66%;
+	}
+}
+#flex-container {
+	max-width: 1000px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }

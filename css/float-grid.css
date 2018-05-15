@@ -47,8 +47,22 @@
 }
 
 /* Non-mobile, grid */
-@media only screen and (min-width: 640px) {
+@media only screen and (min-width: 590px) {
+  /* 3 columns, 3/12 in % */  
+  .col-2 {
+    width: 33.3%;
+  }
+  .col-2:nth-child(4){
+    clear: left;
+  }
+}
 
+
+/* Non-mobile, grid */
+@media only screen and (min-width: 990px) {
+  .col-2:nth-child(4){
+    clear: none;
+  }
   /* 6 columns */
   .col-2 {
     width: 16.66%;
