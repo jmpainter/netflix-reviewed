@@ -207,9 +207,8 @@ function sortMovies(type) {
   displayResults();
 }
 
-function handleSortSubmit() {
-  $('.js-form').submit(event => {
-    event.preventDefault();
+function handleSortSelectChange() {
+  $('#sort-by').change(event => {
     sortMovies($('#sort-by').val());
   });
 }
@@ -274,7 +273,7 @@ function startApp() {
   } else {
     getMovieListFromAPI();
   }
-  handleSortSubmit();
+  handleSortSelectChange();
   handleMovieClick();
 }
 $(startApp);
