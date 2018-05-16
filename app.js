@@ -171,6 +171,7 @@ function displayResults() {
 
 function displayResultsWithIncompleteData() {
   if(appState.loadComplete === false) {
+    console.log('Calling displayResults with incomplete data return');
     displayResults();
   }
 }
@@ -234,7 +235,7 @@ function renderDetail(movie) {
     <div class="row">
     <div class="col-12">
       <div id="detail-frame">
-        <img src="${poster}" alt="">
+        <img src="${poster}" alt="${movie.title}">
         <p class="detail-title">${movie.title}</p>
         <p class="detail-released">${movie.released}</p>
         <p class="detail-synopsis">${movie.synopsis}</p>
@@ -279,7 +280,7 @@ function startApp() {
     appState.movies = movies.ITEMS;
     displayResults();
   } else {
-    setTimeout(displayResultsWithIncompleteData, 6000)
+    setTimeout(displayResultsWithIncompleteData, 5000)
     getMovieListFromAPI();
   }
   handleSortSelectChange();

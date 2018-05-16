@@ -24,6 +24,7 @@ body {
 	font-family: 'Arimo', sans-serif; 
 	line-height: 1;
 	padding: 16px 6px;
+	color: #191919;
 }
 header {
   padding: 20px;
@@ -236,21 +237,18 @@ button:focus {
 .col-2 {
 	width: 100%;
 }
-
 @media only screen and (min-width: 375px) {
   /* 3 columns, 3/12 in % */  
   .col-2 {
     width: 50%;
   }
 }
-
 @media only screen and (min-width: 510px) {
   /* 3 columns, 3/12 in % */  
   .col-2 {
     width: 33.33%;
   }
 }
-
 @media only screen and (min-width: 670px) {
   /* 3 columns, 3/12 in % */  
   .col-2 {
