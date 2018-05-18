@@ -183,7 +183,7 @@ button:focus {
 }
 .title {
 	font-weight: bold;
-	padding-bottom: 6px;
+	padding: 4px 0 6px;
 }
 .movie-frame, #detail-frame {
 	border: 1px solid black;
