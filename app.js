@@ -140,7 +140,7 @@ function renderMovie(movie) {
   return `
   <div class="col-2">
     <div class="movie-frame">
-      <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}" role="button"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title}">
+      <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}" role="button"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title} Image">
       <p class="title">${movie.title}</p></a>
       <p class="type">Type: ${movie.type}</p>
       <p class="runtime">${movie.runtime ? 'Runtime: ' +  movie.runtime : ''}</p>
@@ -233,17 +233,16 @@ function renderDetail(movie) {
     poster = movie.image;
   }  
   return `
-    <div class="row">
     <div class="col-12">
       <div id="detail-frame">
         <img src="${poster}" alt="${movie.title}">
+        <hr>
         <p class="detail-title">${movie.title}</p>
         <p class="detail-released">${movie.released}</p>
         <p class="detail-synopsis">${movie.synopsis}</p>
         <button class='js-back-button'>Back</button>
       </div>
     </div>
-  </div>  
   `;
 }
 

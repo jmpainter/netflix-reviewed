@@ -24,7 +24,8 @@ body {
 	font-family: 'Arimo', sans-serif; 
 	line-height: 1;
 	padding: 16px 6px;
-	color: #191919;
+	color: white;
+	background-color: #418241;
 }
 header {
   padding: 20px;
@@ -59,13 +60,13 @@ button {
 }
 
 button, .select select {
-	background: #ef0715;
+	background: #F86870;
 	font-size: 16px;
+	color: black;
 }
 
 button {
   padding: 10px;
-  color: white;
   cursor: pointer;
 	box-shadow: none;
 	border: 0;
@@ -97,7 +98,6 @@ button:focus {
 	width: 100%;
 	padding: 10px 15px;
 	cursor: pointer;
-	color: white;
 	border: 0;
 	border-radius: 0;
 
@@ -174,9 +174,9 @@ button:focus {
 
 .movie-frame {
 	padding: 5px;
-	border-radius: 3px;
 	margin: 9px auto;
 	max-width: 141px;
+	border-radius: 3px;
 }
 .thumbnail {
 	width: 128px;
@@ -186,7 +186,9 @@ button:focus {
 	padding-bottom: 6px;
 }
 .movie-frame, #detail-frame {
-	border: 1px solid #828282;
+	border: 1px solid black;
+	color: black;
+	background-color: white;
 }
 
 /* Detail Screen */
@@ -194,7 +196,8 @@ button:focus {
 #detail-frame {
 	margin: auto;
 	padding: 15px;
-	max-width: 456px;	
+	max-width: 456px;
+	border-radius: 7px;
 }
 .detail-title {
 	margin: 20px 0 10px;
@@ -211,6 +214,10 @@ button:focus {
 #detail-frame img {
 	display: block;
 	margin: auto;
+}
+hr {
+	margin: 15px 0;
+	border-top: 1px solid #8c8b8b;
 }
 
 /* Responsive Styles */
