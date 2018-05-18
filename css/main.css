@@ -185,6 +185,9 @@ button:focus {
 	font-weight: bold;
 	padding: 4px 0 6px;
 }
+.movie-frame p {
+	margin: 5px 0;
+}
 .movie-frame, #detail-frame {
 	border: 1px solid black;
 	color: black;
