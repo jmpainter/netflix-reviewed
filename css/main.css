@@ -60,15 +60,15 @@ button {
 
 button, .select select {
 	background: #ef0715;
-	font-size: 16px;	
+	font-size: 16px;
 }
 
 button {
-  padding: 9px;
+  padding: 10px;
   color: white;
   cursor: pointer;
 	box-shadow: none;
-  border-style: solid;	
+	border: 0;
 }
 button:active {
   top: 1px;
@@ -82,7 +82,9 @@ button:active {
 button:hover,
 button:focus {
 	background: #f53b47;
+	outline: #2ce0e0 2px solid;
 }
+
 /* Select */
 .select {
 	position: relative;
@@ -98,7 +100,7 @@ button:focus {
 	color: white;
 	border: 0;
 	border-radius: 0;
-	outline: 0;
+
 	appearance: none; 
 	-webkit-appearance: none;
 	-moz-appearance: none;

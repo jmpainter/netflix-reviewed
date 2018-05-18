@@ -1,6 +1,6 @@
 const UNOGS_API_URL = 'https://unogs-unogs-v1.p.mashape.com/aaapi.cgi';
 const OMDB_API_URL = 'https://www.omdbapi.com' ;
-const IS_LOCAL = false;
+const IS_LOCAL = true;
 
 const appState = {
   movies: null,
@@ -33,7 +33,7 @@ function getMovieListFromAPI() {
   let countryId = 'US';
   let page = '1'
   const queryString = `q=get:new${daysBack}:${countryId}&p=${page}&t=ns&st=adv`
-  $.ajax({
+  $.ajax({  
     url: UNOGS_API_URL + '?' + queryString,
     type: 'GET',
     dataType: 'json',
@@ -216,10 +216,11 @@ function sortMovies(type) {
   displayResults();
 }
 
-function handleSortSelectChange() {
-  $('#sort-by').change(event => {
+function handleFormSubmit() {
+  $('.js-form').submit(event => {
+    event.preventDefault();
     sortMovies($('#sort-by').val());
-  });
+  })
 }
 
 function renderDetail(movie) {
@@ -283,7 +284,7 @@ function startApp() {
     setTimeout(displayResultsWithIncompleteData, 5000)
     getMovieListFromAPI();
   }
-  handleSortSelectChange();
+  handleFormSubmit();
   handleMovieClick();
 }
 $(startApp);
