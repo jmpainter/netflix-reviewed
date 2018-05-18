@@ -249,7 +249,7 @@ hr {
 .col-2 {
 	width: 100%;
 }
-@media only screen and (min-width: 375px) {
+@media only screen and (min-width: 330px) {
   /* 3 columns, 3/12 in % */  
   .col-2 {
     width: 50%;
