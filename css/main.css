@@ -193,6 +193,10 @@ button:focus {
 	color: black;
 	background-color: white;
 }
+.error {
+	text-align: center;
+	margin-top: 20px;
+}
 
 /* Detail Screen */
 

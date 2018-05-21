@@ -25,6 +25,7 @@ function logError(jqXHR, exception) {
     msg = 'Uncaught Error.\n' + jqXHR.responseText;
   }
   console.log(msg);
+  $('#results').html('<h2 class="error">Sorry, could not retrieve data</h2>')
 }
 
 function getMovieListFromAPI() {
@@ -171,7 +172,7 @@ function displayResults() {
 
 function displayResultsWithIncompleteData() {
   if(appState.loadComplete === false) {
-    console.log('Calling displayResults with incomplete data return');
+    console.log('Calling displayResults with incomplete data');
     displayResults();
   }
 }
@@ -206,11 +207,9 @@ function sortMovies(type) {
     appState.movies = appState.movies.sort((a, b) => getRuntimeInMinutes(a.runtime) - getRuntimeInMinutes(b.runtime));
   } else if (type ==='imdb') {
     appState.movies = appState.movies.sort((a, b) => getRating(b.reviewImdb, '/') - getRating(a.reviewImdb, '/'));
-  }
-  else if (type ==='rottentomatoes') {
+  } else if (type ==='rottentomatoes') {
     appState.movies = appState.movies.sort((a, b) => getRating(b.reviewRt, '%') - getRating(a.reviewRt, '%'));
-  }
-  else if (type ==='metacritic') {
+  } else if (type ==='metacritic') {
     appState.movies = appState.movies.sort((a, b) => getRating(b.reviewMetacritic, '/') - getRating(a.reviewMetacritic, '/'));
   }  
   displayResults();
