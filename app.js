@@ -143,10 +143,10 @@ function renderMovie(movie) {
       <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}" role="button"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title} Image">
       <p class="title">${movie.title}</p></a>
       <p class="type">Type: ${movie.type}</p>
-      <p class="runtime">${movie.runtime ? 'Runtime: ' +  movie.runtime : ''}</p>
       <p class="rating">${movie.reviewImdb ? 'ImDB: ' +  movie.reviewImdb : ''}</p>
       <p class="rating">${movie.reviewMetacritic ? 'Metacritic: ' +  movie.reviewMetacritic : ''}</p>
       <p class="rating">${movie.reviewRt ? 'Rotten Tomatoes: ' + movie.reviewRt : ''}</p>
+      <p class="runtime">${movie.runtime ? 'Runtime: ' +  movie.runtime : ''}</p>
     </div>
   </div> 
   `;
