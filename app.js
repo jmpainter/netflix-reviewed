@@ -107,11 +107,9 @@ function setDetailsForMovie(details) {
       appState.movies[movieIndex]['reviewImdb'] = reviewImdb;
       appState.movies[movieIndex]['reviewRt'] = reviewRt;
       appState.movies[movieIndex]['reviewMetacritic'] = reviewMetacritic;
-    
       let poster;
       details.Poster && details.Poster !== "N/A" ? poster = details.Poster : poster = "";
       appState.movies[movieIndex]['IMDBPoster'] = poster;
-
       if(appState.movies[movieIndex]['runtime'] === '') {
         appState.movies[movieIndex]['runtime'] = runtimeFormat(details.Runtime);
       }
