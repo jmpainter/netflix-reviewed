@@ -1,16 +1,38 @@
 const UNOGS_API_URL = 'https://unogs-unogs-v1.p.mashape.com/aaapi.cgi';
 const OMDB_API_URL = 'https://www.omdbapi.com' ;
-const IS_LOCAL = false;
 
 const appState = {
   movies: null,
   loadComplete: false
 };
 
+function getMovieListFromAPI() {
+  let daysBack = '12';
+  let countryId = 'US';
+  let page = '1'
+  const queryString = `q=get:new${daysBack}:${countryId}&p=${page}&t=ns&st=adv`
+  $.ajax({  
+    url: UNOGS_API_URL + '?' + queryString,
+    type: 'GET',
+    dataType: 'json',
+    contentType: 'application/json; charset=utf-8',
+    beforeSend: setHeader
+  }).done(data => {
+    appState.movies = data.ITEMS;
+    requestAllMovieReviews();
+  })
+  .fail((jqXHR, exception) => logError(jqXHR, exception));
+
+  function setHeader(xhr) {
+    xhr.setRequestHeader('X-Mashape-Key', 'GdPqlW6JWXmshZnos2IMD8VChbjzp1JGSXCjsnWYu1rvcs6MsH');
+    xhr.setRequestHeader('Accept', 'application/json');
+  }
+}
+
 function logError(jqXHR, exception) {
   var msg = '';
   if (jqXHR.status === 0) {
-    msg = 'Not connect.\n Verify Network.';
+    msg = 'Not connected.\n Verify Network.';
   } else if (jqXHR.status == 404) {
     msg = 'Requested page not found. [404]';
   } else if (jqXHR.status == 500) {
@@ -25,53 +47,27 @@ function logError(jqXHR, exception) {
     msg = 'Uncaught Error.\n' + jqXHR.responseText;
   }
   console.log(msg);
-  $('#results').html('<h2 class="error">Sorry, could not retrieve data</h2>')
-}
-
-function getMovieListFromAPI() {
-
-  let daysBack = '12';
-  let countryId = 'US';
-  let page = '1'
-  const queryString = `q=get:new${daysBack}:${countryId}&p=${page}&t=ns&st=adv`
-  $.ajax({  
-    url: UNOGS_API_URL + '?' + queryString,
-    type: 'GET',
-    dataType: 'json',
-    contentType: 'application/json; charset=utf-8',
-    beforeSend: setHeader
-  }).done(data => {
-    appState.movies = data.ITEMS;
-    console.log(appState.movies);
-    requestAllMovieReviews();
-  })
-    .fail((jqXHR, exception) => logError(jqXHR, exception));
-
-  function setHeader(xhr) {
-    xhr.setRequestHeader('X-Mashape-Key', 'GdPqlW6JWXmshZnos2IMD8VChbjzp1JGSXCjsnWYu1rvcs6MsH');
-    xhr.setRequestHeader('Accept', 'application/json');
-  }
+  $('#results').html('<h2 class="error">Sorry, could not retrieve data</h2>');
 }
 
 function requestAllMovieReviews() {
+  // array holds set of promises for request of details for each movie to determine when we can display results
   const promises = [];
   appState.movies.forEach(movie => promises.push(getReviewsForMovieFromAPI(movie.imdbid)));
   Promise.all(promises).then((results) => {
-    console.log('all promises complete');
-    console.log(results);
     appState.loadComplete = true;
     displayResults();
   });
 }
 
 function getReviewsForMovieFromAPI(imdbid) {
-  const data = {
+  const params = {
     i: imdbid,
     apikey: 'dc59eece'
   };
   return $.ajax({
     url: OMDB_API_URL,
-    data: data,
+    data: params,
     type: 'GET',
     dataType: 'json'
   }).done(details => {
@@ -93,7 +89,6 @@ function setDetailsForMovie(details) {
   if(details.imdbID) {
     const movieIndex = appState.movies.findIndex(movie => movie.imdbid === details.imdbID);
     if(movieIndex !== -1) {
-      console.log(`movie index ${movieIndex} matched to imdbID ${details.imdbID}`);
       let reviewImdb = null;
       let reviewRt = null;
       let reviewMetacritic = null;
@@ -120,26 +115,20 @@ function setDetailsForMovie(details) {
       if(appState.movies[movieIndex]['runtime'] === '') {
         appState.movies[movieIndex]['runtime'] = runtimeFormat(details.Runtime);
       }
-    } else {
-      console.log(`No match in state. details: ${details}`);
-    }
-  } else {
-    console.log(`No result returned. details: ${JSON.stringify(details)}`);
+    } 
   }
 }
 
 function changeToHttps(url) {
-  if(!IS_LOCAL) {
-    if(url.indexOf('http://') !== -1) {
-      url = 'https' + url.slice(4);
-    }
+  if(url.indexOf('http://') !== -1) {
+    url = 'https' + url.slice(4);
   }
   return url;
 }
 
 function renderMovie(movie) {
   return `
-  <div class="col-2">
+  <div class="col">
     <div class="movie-frame">
       <a href="javascript:void(0)" class="js-movie" data-imdbid="${movie.imdbid}" role="button"><img class="thumbnail" src="${changeToHttps(movie.image)}" alt="${movie.title} Image">
       <p class="title">${movie.title}</p></a>
@@ -154,16 +143,11 @@ function renderMovie(movie) {
 }
 
 function displayResults() {
-  console.log('displayResults called');
-  console.log(appState.movies);  
   let results = '';
   if(appState.movies.length > 0) {
     results = results + '<div id="flex-container">\n';
     for(let i = 0; i < appState.movies.length; i++){
-      results = results += renderMovie(appState.movies[i]);
-      if((i + 1) % 6 === 0) {
-        // results = results + '</div><div class="row">';
-      }
+      results = results + renderMovie(appState.movies[i]);
     }
     results = results + '</div>\n';
   }
@@ -172,7 +156,6 @@ function displayResults() {
 
 function displayResultsWithIncompleteData() {
   if(appState.loadComplete === false) {
-    console.log('Calling displayResults with incomplete data');
     displayResults();
   }
 }
@@ -215,15 +198,8 @@ function sortMovies(type) {
   displayResults();
 }
 
-function handleFormSubmit() {
-  $('.js-form').submit(event => {
-    event.preventDefault();
-    sortMovies($('#sort-by').val());
-  })
-}
-
 function renderDetail(movie) {
-  let poster;
+  let poster = '';
   if(movie.largeimage !== "") {
     poster = movie.largeimage;
   } else if (movie.IMDBPoster) {
@@ -232,16 +208,14 @@ function renderDetail(movie) {
     poster = movie.image;
   }  
   return `
-    <div class="col-12">
-      <div id="detail-frame">
-        <img src="${poster}" alt="${movie.title}">
-        <hr>
-        <p class="detail-title">${movie.title}</p>
-        <p class="detail-released">${movie.released}</p>
-        <p class="detail-synopsis">${movie.synopsis}</p>
-        <button class='js-back-button'>Back</button>
-      </div>
-    </div>
+  <div id="detail-frame">
+    <img src="${poster}" alt="${movie.title}">
+    <hr>
+    <p class="detail-title">${movie.title}</p>
+    <p class="detail-released">${movie.released}</p>
+    <p class="detail-synopsis">${movie.synopsis}</p>
+    <button class='js-back-button'>Back</button>
+  </div>
   `;
 }
 
@@ -255,19 +229,23 @@ function handleBackButtonClick() {
   $('.js-back-button').click(returnToResults);
 }
 
-function getMovieFromIMDBID(imdbid) {
-  return appState.movies.find(movie => movie.imdbid === imdbid);
+function handleFormSubmit() {
+  $('.js-form').submit(event => {
+    event.preventDefault();
+    sortMovies($('#sort-by').val());
+  })
 }
 
 function handleMovieClick() {
   $('#results').on('click', '.js-movie', function(event) {
     const imdbid = $(this).attr('data-imdbid');
-    const movie = getMovieFromIMDBID(imdbid);
+    const movie = appState.movies.find(movie => movie.imdbid === imdbid);
     $('#results').hide();
     if(movie) {
       $('#results').html(renderDetail(movie));
     } else {
-      alert('movie could not be found');
+      $('#results').html('<h2 class="error">Movie details could not be found</h2>');
+      ('movie could not be found');
     }
     handleBackButtonClick();
     $('#results').fadeIn('slow');
@@ -275,13 +253,9 @@ function handleMovieClick() {
 }
 
 function startApp() {
-  if(IS_LOCAL) {
-    appState.movies = movies.ITEMS;
-    displayResults();
-  } else {
-    setTimeout(displayResultsWithIncompleteData, 5000)
-    getMovieListFromAPI();
-  }
+  //set timeout to display results in case not all requests for movie data are filled
+  setTimeout(displayResultsWithIncompleteData, 5000);
+  getMovieListFromAPI();
   handleFormSubmit();
   handleMovieClick();
 }
