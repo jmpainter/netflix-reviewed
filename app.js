@@ -21,7 +21,10 @@ function getMovieListFromAPI() {
     appState.movies = data.ITEMS;
     requestAllMovieReviews();
   })
-  .fail((jqXHR, exception) => logError(jqXHR, exception));
+  .fail((jqXHR, exception) => {
+    logError(jqXHR, exception);
+    $('#results').html('<h2 class="error">Sorry, could not retrieve data</h2>');
+  });
 
   function setHeader(xhr) {
     xhr.setRequestHeader('X-Mashape-Key', 'GdPqlW6JWXmshZnos2IMD8VChbjzp1JGSXCjsnWYu1rvcs6MsH');
@@ -47,7 +50,6 @@ function logError(jqXHR, exception) {
     msg = 'Uncaught Error.\n' + jqXHR.responseText;
   }
   console.log(msg);
-  $('#results').html('<h2 class="error">Sorry, could not retrieve data</h2>');
 }
 
 function requestAllMovieReviews() {
