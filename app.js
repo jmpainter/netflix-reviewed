@@ -210,7 +210,6 @@ function renderDetail(movie) {
   return `
   <div id="detail-frame">
     <img src="${poster}" alt="${movie.title}">
-    <hr>
     <p class="detail-title">${movie.title}</p>
     <p class="detail-released">${movie.released}</p>
     <p class="detail-synopsis">${movie.synopsis}</p>
