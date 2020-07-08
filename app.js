@@ -17,17 +17,18 @@ function getMovieListFromAPI() {
     dataType: "json",
     contentType: "application/json; charset=utf-8",
     beforeSend: setHeader,
-  })
-    .done((data) => {
-      appState.movies = data.ITEMS;
+    success: function (data) {
+      appState.movies = data.ITEMS.slice(0);
+      sortMovies("title");
       requestAllMovieReviews();
-    })
-    .fail((jqXHR, exception) => {
+    },
+    error: function (jqXHR, exception) {
       logError(jqXHR, exception);
       $("#results").html(
         '<h2 class="error">Sorry, could not retrieve data</h2>'
       );
-    });
+    },
+  });
 
   function setHeader(xhr) {
     xhr.setRequestHeader("x-rapidapi-host", "unogs-unogs-v1.p.rapidapi.com");
@@ -81,11 +82,13 @@ function getReviewsForMovieFromAPI(imdbid) {
     data: params,
     type: "GET",
     dataType: "json",
-  })
-    .done((details) => {
+    success: function (details) {
       setDetailsForMovie(details);
-    })
-    .fail((jqXHR, exception) => logError(jqXHR, exception));
+    },
+    error: function (jqXHR, exception) {
+      logError(jqXHR, exception);
+    },
+  });
 }
 
 function runtimeFormat(runtime) {
@@ -145,23 +148,30 @@ function renderMovie(movie) {
   return `
   <div class="col">
     <div class="movie-frame">
-      <a href="javascript:void(0)" class="js-movie" data-imdbid="${
-        movie.imdbid
-      }" role="button"><img class="thumbnail" src="${changeToHttps(
-    movie.image
-  )}" alt="${movie.title} Image">
-      <p class="title">${movie.title}</p></a>
+      <a 
+        href="javascript:void(0)"
+        class="js-movie"
+        data-imdbid="${movie.imdbid}"
+        role="button">
+        <img 
+          class="thumbnail"
+          src="${changeToHttps(movie.image)}"
+          alt="${movie.title} Image">
+        <p class="title">${movie.title}</p>
+      </a>
       <p class="type">Type: ${movie.type}</p>
-      <p class="rating">${
-        movie.reviewImdb ? "ImDB: " + movie.reviewImdb : ""
-      }</p>
-      <p class="rating">${
-        movie.reviewMetacritic ? "Metacritic: " + movie.reviewMetacritic : ""
-      }</p>
-      <p class="rating">${
-        movie.reviewRt ? "Rotten Tomatoes: " + movie.reviewRt : ""
-      }</p>
-      <p class="runtime">${movie.runtime ? "Runtime: " + movie.runtime : ""}</p>
+      <p class="rating">
+        ${movie.reviewImdb ? "ImDB: " + movie.reviewImdb : ""}
+      </p>
+      <p class="rating">
+        ${movie.reviewMetacritic ? "Metacritic: " + movie.reviewMetacritic : ""}
+      </p>
+      <p class="rating">
+        ${movie.reviewRt ? "Rotten Tomatoes: " + movie.reviewRt : ""}
+      </p>
+      <p class="runtime">
+        ${movie.runtime ? "Runtime: " + movie.runtime : ""}
+      </p>
     </div>
   </div> 
   `;
@@ -206,25 +216,25 @@ function getRating(str, separator) {
 
 function sortMovies(type) {
   if (type === "title") {
-    appState.movies = appState.movies.sort((a, b) => {
+    appState.movies.sort((a, b) => {
       if (a.title < b.title) return -1;
       if (a.title > b.title) return 1;
       return 0;
     });
   } else if (type === "runtime") {
-    appState.movies = appState.movies.sort(
+    appState.movies.sort(
       (a, b) => getRuntimeInMinutes(a.runtime) - getRuntimeInMinutes(b.runtime)
     );
   } else if (type === "imdb") {
-    appState.movies = appState.movies.sort(
+    appState.movies.sort(
       (a, b) => getRating(b.reviewImdb, "/") - getRating(a.reviewImdb, "/")
     );
   } else if (type === "rottentomatoes") {
-    appState.movies = appState.movies.sort(
+    appState.movies.sort(
       (a, b) => getRating(b.reviewRt, "%") - getRating(a.reviewRt, "%")
     );
   } else if (type === "metacritic") {
-    appState.movies = appState.movies.sort(
+    appState.movies.sort(
       (a, b) =>
         getRating(b.reviewMetacritic, "/") - getRating(a.reviewMetacritic, "/")
     );
